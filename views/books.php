@@ -2,6 +2,8 @@
 <?php ob_start(); ?>
 <h1>Liste des titres</h1>
 
+<p>HOHHOOOHOHOHOHOHOHOHOHOHOHOHOHOHOHOH</p>
+
 <ul>
     <?php
         foreach ($books as $book) {
@@ -12,8 +14,6 @@
     ?>
 </ul>
 
-<pre>
-    <?php var_dump($books); ?>
-</pre>
+
 <?php $content = ob_get_clean(); ?>
 <?php require('public/index.php'); ?>
