@@ -7,3 +7,11 @@ function listbooks()
 
     require('views/books.php');
 }
+
+function showBook($id) 
+{
+    $book = getBook($id);
+    require('views/book.php');
+}
+
+

@@ -1,4 +1,22 @@
-. card .img {
-    display: flex;
-   
+.card {
+    border-color: #343a40;
+}
+
+.description {
+    font-size: small;
+}
+
+.img_livre {
+    width: 100%;
+    height: 25em;
+}
+
+.card-title {
+    width: 100%;
+    height: 3em;
+}
+
+.card-text {
+    width: 100%;
+    height: 8em;
 }
