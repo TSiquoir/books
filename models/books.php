@@ -38,11 +38,15 @@ function getBooks()
         FROM books
         LEFT JOIN authors 
         ON books.author_id = authors.id
+        LIMIT :offset, :limit
     ');
+
+    $stmt->bindParam(':offset', $offset);
+    $stmt->bindParam(':limit', $limit);
     
     $stmt->execute();
   
-    return $stmt->fetchAll();
+    return $stmt->fetchAll(PDO::FETCH ASSOC);
 
 }
 
