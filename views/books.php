@@ -10,7 +10,7 @@
             <div class="col-md-3 mt-4">
                 <div class="card-deck">
                     <div class="card">
-                        <img class="img_livre" src="<?php echo $book ["imageLink"]; ?> " class="card-img-top" alt="<?php echo $book ['title']; ?> ">
+                        <img class="img_livre" src="<?php echo $book["image"]; ?> " class="card-img-top" alt="<?php echo $book ['title']; ?> ">
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a href="?action=book&id=<?php echo $book['id']; ?>">

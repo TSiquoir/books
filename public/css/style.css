@@ -20,3 +20,33 @@
     width: 100%;
     height: 8em;
 }
+
+
+
+/*Book*/
+
+.absolute {
+    position: absolute;
+    width: 150px;
+    height: 350px;
+    background-color: #fdd;
+    border-color: #900;
+    opacity: 0.7;
+}
+
+#abs1 {
+    top: 10px;
+    left: 10px;
+  }
+
+  #sta1 {
+    background-color: rgb(80, 20, 18);
+    margin: 0px 50px 0px 50px;
+  }
+
+  .static {
+    position: static;
+    height: 80px;
+    background-color: rgb(11, 64, 71);
+    border-color: #996;
+  }

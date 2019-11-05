@@ -1,10 +1,13 @@
 <?php $title = "Liste des livres"; ?>
 <?php ob_start(); ?>
 
-<body>
-    <section class="backgrounds">
-        <img class="img_livre" src="<?php echo $book ["imageLink"]; ?> " alt="<?php echo $book ['title']; ?> ">
-        <article>
+<body >
+    <section id="abs1" class="absolute " >
+        <div >
+            <img class="img_livre col-md-3 .offset-md-9" src="<?php echo $book ["image"]; ?> " alt="<?php echo $book ['title']; ?> ">
+        </div>
+        
+        <article id="sta1" class="static">
             <h2><?php echo $book['title']; ?></h2>
             <p class="description">
                 Auteur : <?php echo $book['author']; ?><br/>

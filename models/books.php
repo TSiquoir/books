@@ -1,25 +1,68 @@
 <?php
 
+require_once('utils/db.php');
+
+
+
+function countBooks()
+{
+    $db = dbConnect();
+
+    $stmt = $db->prepare('SELECT count(*) FROM books');
+ 
+
+    $stmt->execute();
+    return $stmt->fetchColumn();
+}
+
+
 
 function getBooks()
 {
-    $file = file_get_contents('json/books.json');
-    $books = json_decode($file, true);
-    return $books;
+    $limit = 20;
+
+    $page = isset($_GET['page']) ? (int) $_GET['page']:1;
+
+    $count = countBooks();
+
+    $offset = ($page - 1) * $limit;
+
+    var_dump($offset);
+    die;
+
+    $db = dbConnect();
+
+    $stmt = $db->prepare('SELECT
+        books.*,
+        authors.name AS author 
+        FROM books
+        LEFT JOIN authors 
+        ON books.author_id = authors.id
+    ');
+    
+    $stmt->execute();
+  
+    return $stmt->fetchAll();
+
 }
+
 
 function getbook ($id)
 {
-    $file = file_get_contents('json/books.json');
-    $books = json_decode($file, true);
+   $db = dbConnect();
+   $stmt = $db->prepare('SELECT
+    books.*,
+    authors.name AS author 
+    FROM books
+    LEFT JOIN authors 
+    ON books.author_id = authors.id
+    WHERE books.id = :id
+   ');
 
-    $result = null;
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
-    foreach ($books as $book) {
-        if ($book['id'] === $id) {
-            $result = $book;
-        }
-    }
+    $stmt->execute();
 
-    return $result;
+    return $stmt->fetch();
 }
+
