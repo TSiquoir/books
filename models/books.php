@@ -46,7 +46,7 @@ function getBooks()
     
     $stmt->execute();
   
-    return $stmt->fetchAll(PDO::FETCH ASSOC);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 }
 
