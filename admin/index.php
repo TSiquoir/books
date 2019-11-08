@@ -3,18 +3,7 @@
 
     $id = isset($_GET['id']) ? (int) $_GET['id'] : NULL;
 
-    if ($id) {
-        $stmt = $db->prepare('SELECT * FROM books WHERE id = :id');
-      
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-        $stmt->execute();
-
-        $book = $stmt->fetch();
-        
-        
-    }
-
+  
     $stmt = $db->prepare('SELECT * FROM authors Order BY name');
     
     $stmt->execute();
@@ -24,6 +13,7 @@
     // Seulement quand le formulaire est posté
     if (isset($_POST['book'])) {
 
+        $id = isset($_POST['id']) ? (int) $_POST['id'] : null;
         $title = (string) $_POST['title'];
         $description = (string) $_POST['description'];
         $author = (int) $_POST['author_id'];
@@ -33,13 +23,20 @@
         $language = (string) $_POST['language'];
         $country = (string) $_POST['country'];
 
+        if (!$title) {
+            throw new Exception('Invalid title');
+        }
+
         if (!preg_match('/^(http|https):\/\/([a-z]{2})\.wikipedia\.org\/([a-zA-Z0-9-_\/%:]+)?/i', $wikipedia_link)) {
             $wikipedia_link = '';
         }
     
-
-        // INSERT INTO books (title, description, author_id, pages, `year`, `language`, country) VALUES ("Titre de test", "xxxxxxxx", 1, 211, 1980, "Français", "France")
-        $stmt = $db->prepare('INSERT INTO 
+        if ($id) {
+            $stmt = $db->prepare('UPDATE books 
+            SET title = :title, description = :description, author_id = :author_id, pages = :pages, year = :year, language = :language, country = :country, wikipedia_link = :wikipedia_link WHERE id=:id');
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        } else {
+            $stmt = $db->prepare('INSERT INTO 
             `books`(
                 `title`,
                 `description`,
@@ -48,7 +45,7 @@
                 `year`,
                 `language`,
                 `country`,
-                `wikipedia_link`,
+                `wikipedia_link`
             )
             VALUE (
                 :title,
@@ -58,8 +55,12 @@
                 :year,
                 :language,
                 :country,
-                :wikipedia_link,
+                :wikipedia_link
             )');
+        }
+
+        // INSERT INTO books (title, description, author_id, pages, `year`, `language`, country) VALUES ("Titre de test", "xxxxxxxx", 1, 211, 1980, "Français", "France")
+       
             $stmt->bindParam(':title', $title, PDO::PARAM_STR);
             $stmt->bindParam(':description', $description, PDO::PARAM_STR);
             $stmt->bindParam(':author_id', $author_id, PDO::PARAM_INT);
@@ -71,10 +72,23 @@
 
             $stmt->execute();
 
-            $id = $db->lastInsertId();
+            if(!$id) {
+                $id = $db->lastInsertId();
+                header('Location: ' . $_SERVEUR['REQUEST_URI'] . '?id=' . $id);
+            }
+            
+         }
 
-    }
-
+         if ($id) {
+            $stmt = $db->prepare('SELECT * FROM books WHERE id = :id');
+          
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    
+            $stmt->execute();
+    
+            $book = $stmt->fetch();      
+        }
+    
  
 ?>
 
@@ -96,8 +110,8 @@
 </head>
 <body>
 <div class="container">
-    <h1>Ajouter un livre</h1>
-    <form action="./" method="post">
+    <h1><?php echo !isset($book) ? "Ajouter un livre" : "Editer :" . $book['title']; ?></h1>
+    <form action="./<?php echo isset($book) ? '?id=' . $book['id'] : ''; ?>" method="post">
         <div class="row">
             <div class="col-md-6">
             
@@ -132,7 +146,7 @@
 
                 <div class="form-group">
                     <label for="pages">Nombre de pages</label>
-                    <input name="pages" type="number" step="1" min="0" class="form-control" id="pages">
+                    <input name="pages" value="<?php echo isset($book) ? $book['pages']: ''; ?>" type="number" step="1" min="0" class="form-control" id="pages">
                     
                 </div>
             </div>
@@ -141,25 +155,25 @@
             
                 <div class="form-group">
                     <label for="wikipedia_link">Lien wikipedia</label>
-                    <input name="wikipedia_link" type="text" class="form-control" id="wikipedia_link">
+                    <input name="wikipedia_link" value="<?php echo isset($book) ? $book['wikipedia_link']: ''; ?>" type="text" class="form-control" id="wikipedia_link">
                         
                 </div>
 
                 <div class="form-group">
                     <label for="year">Année de parution</label>
-                    <input name="year" type="number" step="1" min="0" class="form-control" id="year">
+                    <input name="year" value="<?php echo isset($book) ? $book['year']: ''; ?>" type="number" step="1" min="0" class="form-control" id="year">
                     
                 </div>
 
                 <div class="form-group">
                     <label for="language">Langue</label>
-                    <input name="language" type="text" class="form-control" id="language">
+                    <input name="language" value="<?php echo isset($book) ? $book['language']: ''; ?>" type="text" class="form-control" id="language">
                     
                 </div>
 
                 <div class="form-group">
                     <label for="country">Pays</label>
-                    <input name="country" type="text" class="form-control" id="country">
+                    <input name="country" value="<?php echo isset($book) ? $book['country']: ''; ?>" type="text" class="form-control" id="country">
                     
                 </div>
 
@@ -168,7 +182,9 @@
 
         <div clas="row">
             <div class="col-md-12">
+                <input type="hidden" value="<?php echo (isset($book) ? $book['id'] : ''); ?>" name="id">
                 <button name="book" type="submit" class="btn btn-primary">Valider</button>
+                
             </div>
         <div>
     </form>
